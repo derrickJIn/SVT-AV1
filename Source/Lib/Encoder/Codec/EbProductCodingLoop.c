@@ -9283,7 +9283,7 @@ uint8_t update_skip_nsq_shapes(SequenceControlSet *scs_ptr, PictureControlSet *p
     // use an aggressive threshold for QP 20
     if (scs_ptr->static_config.qp <= QP_20) sq_weight += AGGRESSIVE_OFFSET_1;
 #endif
-#if !SHUT_H4_V4_FILTER
+#if !SHUT_SQ_WEIGHT_H4_V4_FILTER
     // use a conservative threshold for H4, V4 blocks
     if (context_ptr->blk_geom->shape == PART_H4 || context_ptr->blk_geom->shape == PART_V4)
         sq_weight += CONSERVATIVE_OFFSET_0;
