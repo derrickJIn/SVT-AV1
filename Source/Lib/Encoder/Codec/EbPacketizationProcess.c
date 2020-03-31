@@ -158,9 +158,11 @@ void update_rc_rate_tables(PictureControlSet *pcs_ptr, SequenceControlSet *scs_p
                                                              [sad_interval_index] = (EbBitNumber)(
                                         ((weight * sad_bits_ref_dequant /
 #if QUANT_CLEANUP
-                                          pcs_ptr->parent_pcs_ptr->deq_bd
+                                          pcs_ptr->parent_pcs_ptr
+                                              ->deq_bd
 #else
-                                          pcs_ptr->parent_pcs_ptr->deq
+                                          pcs_ptr->parent_pcs_ptr
+                                              ->deq
 #endif
                                               .y_dequant_qtx[quantizer_to_qindex[qp_index]][1]) +
                                          (10 - weight) *
@@ -205,9 +207,11 @@ void update_rc_rate_tables(PictureControlSet *pcs_ptr, SequenceControlSet *scs_p
                                                              [sad_interval_index] = (EbBitNumber)(
                                         ((weight * sad_bits_ref_dequant /
 #if QUANT_CLEANUP
-                                          pcs_ptr->parent_pcs_ptr->deq_bd
+                                          pcs_ptr->parent_pcs_ptr
+                                              ->deq_bd
 #else
-                                          pcs_ptr->parent_pcs_ptr->deq
+                                          pcs_ptr->parent_pcs_ptr
+                                              ->deq
 #endif
                                               .y_dequant_qtx[quantizer_to_qindex[qp_index]][1]) +
                                          (10 - weight) *
@@ -253,9 +257,11 @@ void update_rc_rate_tables(PictureControlSet *pcs_ptr, SequenceControlSet *scs_p
                                                        [sad_interval_index] = (EbBitNumber)(
                                         ((weight * sad_bits_ref_dequant /
 #if QUANT_CLEANUP
-                                          pcs_ptr->parent_pcs_ptr->deq_bd
+                                          pcs_ptr->parent_pcs_ptr
+                                              ->deq_bd
 #else
-                                          pcs_ptr->parent_pcs_ptr->deq
+                                          pcs_ptr->parent_pcs_ptr
+                                              ->deq
 #endif
                                               .y_dequant_qtx[quantizer_to_qindex[qp_index]][1]) +
                                          (10 - weight) *
@@ -298,9 +304,11 @@ void update_rc_rate_tables(PictureControlSet *pcs_ptr, SequenceControlSet *scs_p
                                                        [sad_interval_index] = (EbBitNumber)(
                                         ((weight * sad_bits_ref_dequant /
 #if QUANT_CLEANUP
-                                          pcs_ptr->parent_pcs_ptr->deq_bd
+                                          pcs_ptr->parent_pcs_ptr
+                                              ->deq_bd
 #else
-                                          pcs_ptr->parent_pcs_ptr->deq
+                                          pcs_ptr->parent_pcs_ptr
+                                              ->deq
 #endif
                                               .y_dequant_qtx[quantizer_to_qindex[qp_index]][1]) +
                                          (10 - weight) *
@@ -330,10 +338,12 @@ void update_rc_rate_tables(PictureControlSet *pcs_ptr, SequenceControlSet *scs_p
 }
 
 static inline int get_reorder_queue_pos(const EncodeContext *encode_context_ptr, int delta) {
-    return (encode_context_ptr->packetization_reorder_queue_head_index + delta) % PACKETIZATION_REORDER_QUEUE_MAX_DEPTH;
+    return (encode_context_ptr->packetization_reorder_queue_head_index + delta) %
+           PACKETIZATION_REORDER_QUEUE_MAX_DEPTH;
 }
 
-static inline PacketizationReorderEntry* get_reorder_queue_entry(const EncodeContext *encode_context_ptr, int delta) {
+static inline PacketizationReorderEntry *get_reorder_queue_entry(
+    const EncodeContext *encode_context_ptr, int delta) {
     int pos = get_reorder_queue_pos(encode_context_ptr, delta);
     return encode_context_ptr->packetization_reorder_queue[pos];
 }
@@ -359,9 +369,9 @@ static uint32_t count_frames_in_next_tu(const EncodeContext *encode_context_ptr,
     return i;
 }
 
-static int pts_descend(const void *pa, const void*pb) {
-    EbObjectWrapper* a = *(EbObjectWrapper**)pa;
-    EbObjectWrapper* b = *(EbObjectWrapper**)pb;
+static int pts_descend(const void *pa, const void *pb) {
+    EbObjectWrapper *   a  = *(EbObjectWrapper **)pa;
+    EbObjectWrapper *   b  = *(EbObjectWrapper **)pb;
     EbBufferHeaderType *ba = (EbBufferHeaderType *)(a->object_ptr);
     EbBufferHeaderType *bb = (EbBufferHeaderType *)(b->object_ptr);
     return (int)(bb->pts - ba->pts);
@@ -374,7 +384,7 @@ static void push_undisplayed_frame(EncodeContext *encode_context_ptr, EbObjectWr
     }
     uint32_t count = encode_context_ptr->picture_decision_undisplayed_queue_count;
     encode_context_ptr->picture_decision_undisplayed_queue[count++] = wrapper;
-    encode_context_ptr->picture_decision_undisplayed_queue_count = count;
+    encode_context_ptr->picture_decision_undisplayed_queue_count    = count;
 }
 
 static EbObjectWrapper *pop_undisplayed_frame(EncodeContext *encode_context_ptr) {
@@ -389,7 +399,7 @@ static EbObjectWrapper *pop_undisplayed_frame(EncodeContext *encode_context_ptr)
     return ret;
 }
 
-static void sort_undisplayed_frame(EncodeContext* encode_context_ptr) {
+static void sort_undisplayed_frame(EncodeContext *encode_context_ptr) {
     qsort(&encode_context_ptr->picture_decision_undisplayed_queue[0],
           encode_context_ptr->picture_decision_undisplayed_queue_count,
           sizeof(EbObjectWrapper *),
@@ -397,7 +407,8 @@ static void sort_undisplayed_frame(EncodeContext* encode_context_ptr) {
 }
 
 #if DETAILED_FRAME_OUTPUT
-static void print_detailed_frame_info(PacketizationContext* context_ptr, const PacketizationReorderEntry *queue_entry_ptr) {
+static void print_detailed_frame_info(PacketizationContext *           context_ptr,
+                                      const PacketizationReorderEntry *queue_entry_ptr) {
     int32_t i;
     uint8_t showTab[] = {'H', 'V'};
 
@@ -453,8 +464,7 @@ static void print_detailed_frame_info(PacketizationContext* context_ptr, const P
                         (int32_t)context_ptr->dpb_disp_order[LASTrefIdx],
                         (int32_t)context_ptr->dpb_disp_order[BWDrefIdx],
                         showTab[queue_entry_ptr->show_frame],
-                        (int32_t)context_ptr
-                            ->dpb_disp_order[queue_entry_ptr->show_existing_frame],
+                        (int32_t)context_ptr->dpb_disp_order[queue_entry_ptr->show_existing_frame],
                         (int32_t)context_ptr->tot_shown_frames);
             else
                 SVT_LOG("%i (%i  %i)    %i  (%i  %i)   %c  %i frames\n",
@@ -467,8 +477,7 @@ static void print_detailed_frame_info(PacketizationContext* context_ptr, const P
                         showTab[queue_entry_ptr->show_frame],
                         (int32_t)context_ptr->tot_shown_frames);
 
-            if (queue_entry_ptr->ref_poc_list0 !=
-                context_ptr->dpb_disp_order[LASTrefIdx]) {
+            if (queue_entry_ptr->ref_poc_list0 != context_ptr->dpb_disp_order[LASTrefIdx]) {
                 SVT_LOG("L0 MISMATCH POC:%i\n", (int32_t)queue_entry_ptr->poc);
                 exit(0);
             }
@@ -485,11 +494,8 @@ static void print_detailed_frame_info(PacketizationContext* context_ptr, const P
             for (int rr = 0; rr < 7; rr++) {
                 uint8_t dpb_spot = queue_entry_ptr->av1_ref_signal.ref_dpb_index[rr];
 
-                if (queue_entry_ptr->ref_poc_array[rr] !=
-                    context_ptr->dpb_disp_order[dpb_spot])
-                    SVT_LOG("REF_POC MISMATCH POC:%i  ref:%i\n",
-                            (int32_t)queue_entry_ptr->poc,
-                            rr);
+                if (queue_entry_ptr->ref_poc_array[rr] != context_ptr->dpb_disp_order[dpb_spot])
+                    SVT_LOG("REF_POC MISMATCH POC:%i  ref:%i\n", (int32_t)queue_entry_ptr->poc, rr);
             }
         } else {
             if (queue_entry_ptr->has_show_existing)
@@ -497,8 +503,7 @@ static void print_detailed_frame_info(PacketizationContext* context_ptr, const P
                         (int32_t)queue_entry_ptr->picture_number,
                         (int32_t)queue_entry_ptr->poc,
                         showTab[queue_entry_ptr->show_frame],
-                        (int32_t)context_ptr
-                            ->dpb_disp_order[queue_entry_ptr->show_existing_frame],
+                        (int32_t)context_ptr->dpb_disp_order[queue_entry_ptr->show_existing_frame],
                         (int32_t)context_ptr->tot_shown_frames);
             else
                 SVT_LOG("%i  %i  %c   ----INTRA---- %i frames\n",
@@ -519,12 +524,14 @@ static void print_detailed_frame_info(PacketizationContext* context_ptr, const P
 }
 #endif
 
-static void collect_frames_info(PacketizationContext* context_ptr, const EncodeContext *encode_context_ptr, int frames) {
+static void collect_frames_info(PacketizationContext *context_ptr,
+                                const EncodeContext *encode_context_ptr, int frames) {
     for (int i = 0; i < frames; i++) {
         PacketizationReorderEntry *queue_entry_ptr = get_reorder_queue_entry(encode_context_ptr, i);
-        EbBufferHeaderType        *output_stream_ptr = (EbBufferHeaderType *) queue_entry_ptr->output_stream_wrapper_ptr->object_ptr;
+        EbBufferHeaderType *       output_stream_ptr =
+            (EbBufferHeaderType *)queue_entry_ptr->output_stream_wrapper_ptr->object_ptr;
 #if DETAILED_FRAME_OUTPUT
-        print_detailed_frame_info(context_ptr, queue_entry_ptr) ;
+        print_detailed_frame_info(context_ptr, queue_entry_ptr);
 #else
         (void)context_ptr;
 #endif
@@ -535,16 +542,15 @@ static void collect_frames_info(PacketizationContext* context_ptr, const EncodeC
         eb_finish_time(&finish_time_seconds, &finish_time_u_seconds);
 
         eb_compute_overall_elapsed_time_ms(queue_entry_ptr->start_time_seconds,
-                                            queue_entry_ptr->start_time_u_seconds,
-                                            finish_time_seconds,
-                                            finish_time_u_seconds,
-                                            &latency);
+                                           queue_entry_ptr->start_time_u_seconds,
+                                           finish_time_seconds,
+                                           finish_time_u_seconds,
+                                           &latency);
 
         output_stream_ptr->n_tick_count  = (uint32_t)latency;
         output_stream_ptr->p_app_private = queue_entry_ptr->out_meta_data;
         if (queue_entry_ptr->is_alt_ref)
             output_stream_ptr->flags |= (uint32_t)EB_BUFFERFLAG_IS_ALT_REF;
-
     }
 }
 
@@ -558,14 +564,15 @@ static void encode_tu(EncodeContext *encode_context_ptr, int frames, int total_b
         SVT_ERROR("encode size(%d) is too large", total_bytes);
         return;
     }
-    uint8_t *dst                    = output_stream_ptr->p_buffer + total_bytes;
+    uint8_t *dst = output_stream_ptr->p_buffer + total_bytes;
     //we use last frame's output_stream_ptr to hold entire tu, so we need copy backward.
     int last = frames - 1;
     for (int i = last; i >= 0; i--) {
         PacketizationReorderEntry *queue_entry_ptr = get_reorder_queue_entry(encode_context_ptr, i);
-        EbObjectWrapper* wrapper = queue_entry_ptr->output_stream_wrapper_ptr;
-        EbBufferHeaderType *       src_stream_ptr = (EbBufferHeaderType *)wrapper->object_ptr;
-        uint32_t size = src_stream_ptr->n_filled_len;
+        EbObjectWrapper *          wrapper         = queue_entry_ptr->output_stream_wrapper_ptr;
+
+        EbBufferHeaderType *src_stream_ptr = (EbBufferHeaderType *)wrapper->object_ptr;
+        uint32_t            size           = src_stream_ptr->n_filled_len;
         dst -= size;
         memmove(dst, src_stream_ptr->p_buffer, size);
         //1. The last frame is a displayable frame, others are undisplayed.
@@ -573,41 +580,39 @@ static void encode_tu(EncodeContext *encode_context_ptr, int frames, int total_b
         if (i != last && !queue_entry_ptr->is_alt_ref)
             push_undisplayed_frame(encode_context_ptr, wrapper);
     }
-    if (frames > 1)
-        sort_undisplayed_frame(encode_context_ptr);
+    if (frames > 1) sort_undisplayed_frame(encode_context_ptr);
     dst -= TD_SIZE;
     encode_td_av1(dst);
     output_stream_ptr->n_filled_len = total_bytes;
     output_stream_ptr->flags |= EB_BUFFERFLAG_HAS_TD;
 }
 
-static EbErrorType copy_data_from_bitstream(EncodeContext *encode_context_ptr, Bitstream *bitstream_ptr, EbBufferHeaderType *output_stream_ptr) {
-    EbErrorType          return_error = EB_ErrorNone;
-    int size = bitstream_get_bytes_count(bitstream_ptr);
+static EbErrorType copy_data_from_bitstream(EncodeContext *     encode_context_ptr,
+                                            Bitstream *         bitstream_ptr,
+                                            EbBufferHeaderType *output_stream_ptr) {
+    EbErrorType return_error = EB_ErrorNone;
+    int         size         = bitstream_get_bytes_count(bitstream_ptr);
 
-    CHECK_REPORT_ERROR((size + output_stream_ptr->n_filled_len
-                       < output_stream_ptr->n_alloc_len),
+    CHECK_REPORT_ERROR((size + output_stream_ptr->n_filled_len < output_stream_ptr->n_alloc_len),
                        encode_context_ptr->app_callback_ptr,
                        EB_ENC_EC_ERROR2);
 
-    void* dest = output_stream_ptr->p_buffer + output_stream_ptr->n_filled_len;
+    void *dest = output_stream_ptr->p_buffer + output_stream_ptr->n_filled_len;
     bitstream_copy(bitstream_ptr, dest, size);
     output_stream_ptr->n_filled_len += size;
 
     return return_error;
 }
 
-static void encode_show_existing(EncodeContext *encode_context_ptr,
+static void encode_show_existing(EncodeContext *            encode_context_ptr,
                                  PacketizationReorderEntry *queue_entry_ptr,
-                                 EbBufferHeaderType        *output_stream_ptr) {
-    uint8_t* dst = output_stream_ptr->p_buffer;
+                                 EbBufferHeaderType *       output_stream_ptr) {
+    uint8_t *dst = output_stream_ptr->p_buffer;
 
     encode_td_av1(dst);
     output_stream_ptr->n_filled_len = TD_SIZE;
 
-    copy_data_from_bitstream(encode_context_ptr,
-                 queue_entry_ptr->bitstream_ptr,
-                 output_stream_ptr);
+    copy_data_from_bitstream(encode_context_ptr, queue_entry_ptr->bitstream_ptr, output_stream_ptr);
 
     output_stream_ptr->flags |= (EB_BUFFERFLAG_SHOW_EXT | EB_BUFFERFLAG_HAS_TD);
 }
@@ -615,12 +620,13 @@ static void encode_show_existing(EncodeContext *encode_context_ptr,
 static void release_frames(EncodeContext *encode_context_ptr, int frames) {
     for (int i = 0; i < frames; i++) {
         PacketizationReorderEntry *queue_entry_ptr = get_reorder_queue_entry(encode_context_ptr, i);
-        queue_entry_ptr->out_meta_data = (EbLinkedListNode *)EB_NULL;
+        queue_entry_ptr->out_meta_data             = (EbLinkedListNode *)EB_NULL;
         // Reset the Reorder Queue Entry
         queue_entry_ptr->picture_number += PACKETIZATION_REORDER_QUEUE_MAX_DEPTH;
         queue_entry_ptr->output_stream_wrapper_ptr = (EbObjectWrapper *)EB_NULL;
     }
-    encode_context_ptr->packetization_reorder_queue_head_index = get_reorder_queue_pos(encode_context_ptr, frames);
+    encode_context_ptr->packetization_reorder_queue_head_index =
+        get_reorder_queue_pos(encode_context_ptr, frames);
 }
 
 inline static void clear_eos_flag(EbBufferHeaderType *output_stream_ptr) {
@@ -662,6 +668,8 @@ void *packetization_kernel(void *input_ptr) {
     PacketizationReorderEntry *queue_entry_ptr;
     EbLinkedListNode *         app_data_ll_head_temp_ptr;
     uint32_t                   frames;
+    uint32_t                   allocated_size = 0;
+    int                        total_bytes    = 0;
 
     context_ptr->tot_shown_frames            = 0;
     context_ptr->disp_order_continuity_count = 0;
@@ -697,10 +705,8 @@ void *packetization_kernel(void *input_ptr) {
         queue_entry_ptr->is_alt_ref           = pcs_ptr->parent_pcs_ptr->is_alt_ref;
         eb_get_empty_object(scs_ptr->encode_context_ptr->stream_output_fifo_ptr,
                             &pcs_ptr->parent_pcs_ptr->output_stream_wrapper_ptr);
-        output_stream_wrapper_ptr   = pcs_ptr->parent_pcs_ptr->output_stream_wrapper_ptr;
-        output_stream_ptr           = (EbBufferHeaderType *)output_stream_wrapper_ptr->object_ptr;
-        output_stream_ptr->p_buffer = (uint8_t *)malloc(output_stream_ptr->n_alloc_len);
-        assert(output_stream_ptr->p_buffer != NULL && "bit-stream memory allocation failure");
+        output_stream_wrapper_ptr = pcs_ptr->parent_pcs_ptr->output_stream_wrapper_ptr;
+        output_stream_ptr         = (EbBufferHeaderType *)output_stream_wrapper_ptr->object_ptr;
 
         output_stream_ptr->flags = 0;
         output_stream_ptr->flags |=
@@ -712,7 +718,7 @@ void *packetization_kernel(void *input_ptr) {
         output_stream_ptr->n_filled_len = 0;
         output_stream_ptr->pts          = pcs_ptr->parent_pcs_ptr->input_ptr->pts;
         //we output one temporal unit a time, so dts alwasy equals to pts.
-        output_stream_ptr->dts          = output_stream_ptr->pts;
+        output_stream_ptr->dts = output_stream_ptr->pts;
         output_stream_ptr->pic_type =
             pcs_ptr->parent_pcs_ptr->is_used_as_reference_flag
                 ? pcs_ptr->parent_pcs_ptr->idr_flag ? EB_AV1_KEY_PICTURE : pcs_ptr->slice_type
@@ -778,9 +784,13 @@ void *packetization_kernel(void *input_ptr) {
 
         write_frame_header_av1(pcs_ptr->bitstream_ptr, scs_ptr, pcs_ptr, 0);
 
-        copy_data_from_bitstream(encode_context_ptr,
-                    pcs_ptr->bitstream_ptr,
-                    output_stream_ptr);
+        allocated_size = total_bytes + bitstream_get_bytes_count(pcs_ptr->bitstream_ptr);
+        output_stream_ptr->n_alloc_len = allocated_size + TD_SIZE;
+        output_stream_ptr->p_buffer    = (uint8_t *)malloc(output_stream_ptr->n_alloc_len);
+
+        assert(output_stream_ptr->p_buffer != NULL && "bit-stream memory allocation failure");
+
+        copy_data_from_bitstream(encode_context_ptr, pcs_ptr->bitstream_ptr, output_stream_ptr);
 
         if (pcs_ptr->parent_pcs_ptr->has_show_existing) {
             // Reset the Bitstream before writing to it
@@ -857,7 +867,7 @@ void *packetization_kernel(void *input_ptr) {
         // Process the head of the queue
         //****************************************************
         // Look at head of queue and see if we got a td
-        int total_bytes;
+
         while ((frames = count_frames_in_next_tu(encode_context_ptr, &total_bytes))) {
             collect_frames_info(context_ptr, encode_context_ptr, frames);
             //last frame in a termporal unit is a displable frame. only the last frame has pts.
@@ -865,21 +875,21 @@ void *packetization_kernel(void *input_ptr) {
             queue_entry_ptr           = get_reorder_queue_entry(encode_context_ptr, frames - 1);
             output_stream_wrapper_ptr = queue_entry_ptr->output_stream_wrapper_ptr;
             output_stream_ptr         = (EbBufferHeaderType *)output_stream_wrapper_ptr->object_ptr;
-            EbBool eos                = output_stream_ptr->flags &  EB_BUFFERFLAG_EOS;
+            EbBool eos                = output_stream_ptr->flags & EB_BUFFERFLAG_EOS;
 
             encode_tu(encode_context_ptr, frames, total_bytes, output_stream_ptr);
 
-            if (eos && queue_entry_ptr->has_show_existing)
-                clear_eos_flag(output_stream_ptr);
+            if (eos && queue_entry_ptr->has_show_existing) clear_eos_flag(output_stream_ptr);
 
             eb_post_full_object(output_stream_wrapper_ptr);
             if (queue_entry_ptr->has_show_existing) {
                 EbObjectWrapper *existed = pop_undisplayed_frame(encode_context_ptr);
                 if (existed) {
-                    EbBufferHeaderType *existed_output_stream_ptr = (EbBufferHeaderType *)existed->object_ptr;
-                    encode_show_existing(encode_context_ptr, queue_entry_ptr, existed_output_stream_ptr);
-                    if (eos)
-                        set_eos_flag(existed_output_stream_ptr);
+                    EbBufferHeaderType *existed_output_stream_ptr =
+                        (EbBufferHeaderType *)existed->object_ptr;
+                    encode_show_existing(
+                        encode_context_ptr, queue_entry_ptr, existed_output_stream_ptr);
+                    if (eos) set_eos_flag(existed_output_stream_ptr);
                     eb_post_full_object(existed);
                 }
             }
@@ -887,5 +897,4 @@ void *packetization_kernel(void *input_ptr) {
         }
     }
     return EB_NULL;
-
 }
