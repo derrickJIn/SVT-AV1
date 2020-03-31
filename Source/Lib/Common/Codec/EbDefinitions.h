@@ -156,9 +156,10 @@ extern "C" {
 #define QPS_UPDATE              1 // 2 PASS QPS improvement
 #define BUG_FIX_INV_TRANSFORM   1 // Ported PR 1124 : Bug fix in common inv_transform sse3 functions and decoder LF-MT
 
-#define SHUT_FIRST_BLOCK 0
-#define SHUT_SECOND_BLOCK 0
-#define SHUT_THIRD_BLOCK 0
+#define SHUT_SQ_WEIGHT_INTRA_FILTER 0
+#define SHUT_SQ_WEIGHT_COEFF_FILTER 0
+#define SHUT_SQ_WEIGHT_QP_FILTER 0
+#define SHUT_H4_V4_FILTER 0
 
 #endif
 
