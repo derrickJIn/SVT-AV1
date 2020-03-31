@@ -9273,7 +9273,9 @@ uint8_t update_skip_nsq_shapes(SequenceControlSet *scs_ptr, PictureControlSet *p
 #if FIXED_SQ_WEIGHT_PER_QP
     // use an aggressive threshold for low QPs
 #if SQ_WEIGHT_PATCH_0 || SQ_WEIGHT_PATCH_1 || SQ_WEIGHT_PATCH_2 || SQ_WEIGHT_PATCH_3
+#if !SHUT_THIRD_BLOCK
     sq_weight += sq_weight_per_qp[scs_ptr->static_config.qp];
+#endif
 #else
     sq_weight += sq_weight_per_qp[context_ptr->qp];
 #endif
@@ -9281,9 +9283,11 @@ uint8_t update_skip_nsq_shapes(SequenceControlSet *scs_ptr, PictureControlSet *p
     // use an aggressive threshold for QP 20
     if (scs_ptr->static_config.qp <= QP_20) sq_weight += AGGRESSIVE_OFFSET_1;
 #endif
+#if !SHUT_FIRST_BLOCK
     // use a conservative threshold for H4, V4 blocks
     if (context_ptr->blk_geom->shape == PART_H4 || context_ptr->blk_geom->shape == PART_V4)
         sq_weight += CONSERVATIVE_OFFSET_0;
+#endif
 
 
 
@@ -9295,6 +9299,7 @@ uint8_t update_skip_nsq_shapes(SequenceControlSet *scs_ptr, PictureControlSet *p
             context_ptr->md_local_blk_unit[context_ptr->blk_geom->sqi_mds + 1].avail_blk_flag &&
             context_ptr->md_local_blk_unit[context_ptr->blk_geom->sqi_mds + 2].avail_blk_flag) {
 
+#if !SHUT_FIRST_BLOCK
             // Use aggressive thresholds for inter blocks
             if (pcs_ptr->slice_type != I_SLICE) {
                 if (context_ptr->blk_geom->shape == PART_HA) {
@@ -9306,7 +9311,8 @@ uint8_t update_skip_nsq_shapes(SequenceControlSet *scs_ptr, PictureControlSet *p
                         sq_weight += CONSERVATIVE_OFFSET_0;
                 }
             }
-
+#endif
+#if !SHUT_SECOND_BLOCK
             // Use aggressive thresholds for blocks without coeffs
             if (context_ptr->blk_geom->shape == PART_HA) {
                 if (!context_ptr->md_blk_arr_nsq[context_ptr->blk_geom->sqi_mds + 1].block_has_coeff)
@@ -9316,7 +9322,7 @@ uint8_t update_skip_nsq_shapes(SequenceControlSet *scs_ptr, PictureControlSet *p
                 if (!context_ptr->md_blk_arr_nsq[context_ptr->blk_geom->sqi_mds + 2].block_has_coeff)
                     sq_weight += AGGRESSIVE_OFFSET_1;
             }
-
+#endif
             // compute the cost of the SQ block and H block
             uint64_t sq_cost =
                 context_ptr->md_local_blk_unit[context_ptr->blk_geom->sqi_mds].default_cost;
